@@ -55,25 +55,12 @@ class Decompose(object):
             self.radical = self.get_values(self.value_string)
 
     def get_value_string(self):
-        # handle IndexErrors in case we search for a char that's not in the
-        # table, this is mainly needed for the break_down function
         for line in wiki_decomp_list:
             if re.search(r'^\s+{}.+$'.format(self.key_char), line):
                 return re.sub(r'^\s+{}(.+$)'.format(self.key_char),
                               r'\1',
                               line)
         return 'Undefined'
-
-#         try:
-#             value_string = re.findall(r'^\s+{}.+$'.format(self.key_char), self.decomp_table,
-#                     re.M)[0]
-#         except IndexError:
-#             value_string = 'Undefined'
-#         else:
-#             value_string = re.sub(r'^\s+{}(.+$)'.format(self.key_char), r'\1',
-#                     value_string)
-
-#         return value_string
 
     def get_values(self, value_string):
         if re.match(self.sub_string, value_string):
