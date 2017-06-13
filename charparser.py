@@ -2,6 +2,8 @@
 # I actually want
 
 import re
+import jiantofan
+import mappings
 
 def get_char_list(input_file):
     char_list = []
@@ -14,3 +16,10 @@ def get_char_list(input_file):
 
 rsh_chars = get_char_list('heisig/RSH.txt') 
 rth_chars = get_char_list('heisig/RTH.txt') 
+
+maps = mappings.Mappings('mappings/heisig.txt')
+myrel = jiantofan.ComponentRelation('讠', '言', rsh_chars, maps)
+
+# instead of decomposing all chars for ever CR object, a dictionary, where a
+# list of components of every char can be looked up, should be created before
+# initializing CR.
