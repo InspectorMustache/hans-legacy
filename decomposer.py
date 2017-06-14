@@ -113,14 +113,16 @@ class Decompose(object):
                                      char_decomp.second_part,
                                      parts)
 
-    def split_chars(self, char_string):
-        return [char_string[s:s+3] for s in range(0, len(char_string), 3)]
+    # this headache inducing method was necessary in python 2 to split strings
+    # into single chinese characters
+    # def split_chars(self, char_string):
+    #     return [char_string[s:s+3] for s in range(0, len(char_string), 3)]
 
     def populate_char_list(self, keychar1, keychar2):
         char_list = []
         for keychar in [keychar1, keychar2]:
             if not keychar == '*':
-                for char in self.split_chars(keychar):
+                for char in keychar:
                     if not char == '*':
                         char_list.append(char)
 
