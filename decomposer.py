@@ -1,6 +1,10 @@
+'''This module contains mainly things to determine what components a character
+is made up of.'''
+import re
+import sys
+from multiprocessing import Pool
 from bs4 import BeautifulSoup
 from requests import get as download
-import re
 
 WIKI_DECOMP_URL = 'https://commons.wikimedia.org/wiki/Commons:Chinese_characters_decomposition'
 
@@ -37,6 +41,8 @@ wiki_decomp_list = get_decomp_list(wiki_decomp_soup)
 
 
 class Decompose(object):
+    '''This is an object that holds all information about a character from the
+    Wikicommons decomposition project.'''
 
     def __init__(self, key_char, decomp_table=wiki_decomp_list):
         self.key_char = key_char
@@ -79,6 +85,9 @@ class Decompose(object):
             radical
 
     def break_down(self):
+        """This returns a list of all the character's components. Components
+        are broken down recursively, down to the smallest one that can be
+        found."""
         if self.first_part == 'Undefined':
             return []
 
@@ -116,3 +125,46 @@ class Decompose(object):
                         char_list.append(char)
 
         return char_list
+
+
+def get_comp_dict(char_list):
+    """Takes a list of chars and breaks them all down to their components.
+    Returns a dict with chars as keys and lists of their components as
+    values."""
+    # this is quite an extensive process and since I don't understand asyncio,
+    # we're using multiprocessing to speed it up (which I barely understand as
+    # well)
+    pool = Pool()
+    global comp_dict
+    comp_dict = {}
+    print("Breaking down all characters... This can take quite a while and "
+          "take up some resources. For your entertainment, here are the "
+          "characters as they are processed:")
+    for char in char_list:
+        pool.apply_async(get_single_comp_dict,
+                         args=(char, ),
+                         callback=update_comp_dict)
+    pool.close()
+    pool.join()
+    print()
+    return comp_dict
+
+
+def update_comp_dict(single_comp_dict):
+    char = list(single_comp_dict.keys())[0]
+    dynamic_print(char)
+    comp_dict.update(single_comp_dict)
+
+
+def get_single_comp_dict(char):
+    """Component dict for a single char."""
+    return_dict = {}
+    comps = Decompose(char).break_down()
+    return_dict[char] = comps
+    return return_dict
+
+
+def dynamic_print(msg):
+    'Update a single line on the terminal'
+    sys.stdout.write('\r\x1b[K' + str(msg))
+    sys.stdout.flush()
