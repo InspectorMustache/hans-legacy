@@ -165,6 +165,6 @@ def get_single_comp_dict(char):
 
 
 def dynamic_print(msg):
-    'Update a single line on the terminal'
+    '''Update a single line on the terminal'''
     sys.stdout.write('\r\x1b[K' + str(msg))
     sys.stdout.flush()
