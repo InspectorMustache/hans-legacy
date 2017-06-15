@@ -4,6 +4,8 @@ parse_needle = re.compile(r'^([^:]+):(.+)')
 rev_parse_needle = re.compile(r'^([^?]+)\?(.+)')
 
 
+# TODO: remove characters from the object that are not in a list of chars
+# provided by the user
 class Mappings(object):
     def __init__(self, mappings_file):
         self.mappings_file = mappings_file

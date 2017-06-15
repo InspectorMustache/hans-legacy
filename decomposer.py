@@ -1,5 +1,6 @@
 '''This module contains mainly things to determine what components a character
 is made up of.'''
+
 import re
 import sys
 from multiprocessing import Pool
