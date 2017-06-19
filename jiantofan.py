@@ -100,7 +100,3 @@ class ComponentRelation(object):
             except KeyError:
                 pass
         return comps
-
-    def debug(self):
-        if len(self.comp_dict['说']) == 0:
-            pdb.set_trace()
