@@ -114,12 +114,37 @@ class Decompose(object):
                                      char_decomp.second_part,
                                      parts)
 
-    # this headache inducing method was necessary in python 2 to split strings
-    # into single chinese characters
-    # def split_chars(self, char_string):
-    #     return [char_string[s:s+3] for s in range(0, len(char_string), 3)]
+    def break_down_into_objects(self):
+        """Same as break_down but don't create a list of all parts but instead
+        a list of objects of all parts."""
+        if self.first_part == 'Undefined':
+            return []
+
+        keychar1 = self.first_part
+        keychar2 = self.second_part
+        objects = []
+        self.break_down_object_loop(keychar1, keychar2, objects)
+        return objects
+
+    def break_down_object_loop(self, keychar1, keychar2, objects):
+        char_list = self.populate_char_list(keychar1, keychar2)
+        for char in char_list:
+            char_decomp = Decompose(char)
+            if char_decomp.first_part == 'Undefined':
+                objects.append(char_decomp)
+            elif char_decomp.strokes_all == 1:
+                objects.append(char_decomp)
+            elif char_decomp.second_part == '*':
+                objects.append(char_decomp)
+            else:
+                objects.append(char_decomp)
+                self.break_down_object_loop(char_decomp.first_part,
+                                            char_decomp.second_part,
+                                            objects)
 
     def populate_char_list(self, keychar1, keychar2):
+        # first_ and second_part can also contain multiple chars, that's what
+        # this is for
         char_list = []
         for keychar in [keychar1, keychar2]:
             if not keychar == '*':

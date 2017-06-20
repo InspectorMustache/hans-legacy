@@ -1,3 +1,6 @@
+import decomposer
+
+
 class ComponentRelation(object):
 
     def __init__(self,
@@ -32,7 +35,52 @@ class ComponentRelation(object):
         elif charset == 'fan':
             return mappings.fans[char]
 
-    def get_all_learnables(self, jian_comp, fan_comp, learned_chars):
+    def get_exceptions(self, jian_comp, fan_comp, learned_chars):
+        """Get all chars that are an exception to the rule [jian_comp ->
+        fan_comp]. This is based on learned rules and thus needs learned_chars.
+        Returns lists as values, because multi mappings are also considered
+        exceptions."""
+        # real exceptions are very hard to find since we'd need all other jian
+        # -> fan rules to isolate them, so instead we're using all rules
+        # already learned
+        jians = self.get_chars(jian_comp)
+        exceptions = {}
+        for jian in jians:
+            fans = self.get_correspondence(jian)
+            # if it's a multi mapping automatically consider it an exception
+            if len(fans) > 1:
+                exceptions[jian] = fans
+                continue
+
+            elif jian_comp == jian and fan_comp == fans[0]:
+                # this is for chars that are only made up of provided comps
+                continue
+
+            elif fan_comp not in self.comp_dict[fans[0]]:
+                fan = fans[0]
+
+                # TODO: use Decompose.break_down_into_objects() to compare if
+                # components are actually the same by looking at their
+                # positional arrangement, i.e. their comp_type
+
+                # jian_comp_list = self.comp_dict[jian].copy()
+                # fan_comp_list = self.comp_dict[fan].copy()
+                # comps = {'jians': jian_comp_list,
+                #          'fans': fan_comp_list}
+                # comps = self.remove_identical(comps)
+                # # comps = self.remove_learned(comps, learned_chars)
+
+                # # if there's no comps left at this point, it's not an exception
+                # if jian == '凤' or jian == '饥':
+                #     import pdb; pdb.set_trace()
+                # if len(comps['jians']) + len(comps['fans']) == 0:
+                #     continue
+                # elif jian_comp in jian and fan_comp not in comps['fans']:
+                #     exceptions[jian] = fans
+
+        return exceptions
+
+    def get_learnables(self, jian_comp, fan_comp, learned_chars):
         """Get all chars that can be learned with the rule [jian_comp ->
         fan_comp]."""
         jians = self.get_chars(jian_comp)
