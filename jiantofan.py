@@ -1,8 +1,3 @@
-import pdb
-from collections import namedtuple
-import copy
-
-
 class ComponentRelation(object):
 
     def __init__(self,
@@ -52,10 +47,11 @@ class ComponentRelation(object):
             else:
                 fan = fan[0]
 
-            # create a copy of comp_dict so no components get lost
-            comp_dict_cc = copy.deepcopy(self.comp_dict)
-            comps = {'jians': comp_dict_cc[jian],
-                     'fans': comp_dict_cc[fan]}
+            # create copies of comp_lists so no components get lost
+            jian_comp_list = self.comp_dict[jian].copy()
+            fan_comp_list = self.comp_dict[fan].copy()
+            comps = {'jians': jian_comp_list,
+                     'fans': fan_comp_list}
             comps['jians'].remove(jian_comp)
             comps['fans'].remove(fan_comp)
 
