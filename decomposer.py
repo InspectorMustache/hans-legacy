@@ -1,5 +1,5 @@
-'''This module contains mainly things to determine what components a character
-is made up of.'''
+"""This module contains mainly things to determine what components a character
+is made up of."""
 
 import re
 import sys
@@ -11,8 +11,8 @@ WIKI_DECOMP_URL = 'https://commons.wikimedia.org/wiki/Commons:Chinese_characters
 
 
 def download_table(table_url):
-    '''Returns a BeautifulSoup ResultSet with all tables from the WikiCommons
-    Hanzi decomposition project. Each table is contained in a <pre> tag.'''
+    """Returns a BeautifulSoup ResultSet with all tables from the WikiCommons
+    Hanzi decomposition project. Each table is contained in a <pre> tag."""
     # get a list of all <pre>-elements
     print('Downloading from {}...'.format(table_url), end='')
     decomp_html = download(table_url).text
@@ -27,7 +27,7 @@ def download_table(table_url):
 
 
 def get_decomp_list(decomp_soup):
-    '''Make a list out of the table soup object.'''
+    """Make a list out of the table soup object."""
     decomp_list = []
     for pre in decomp_soup:
         for line in pre.string.splitlines():
@@ -42,8 +42,8 @@ wiki_decomp_list = get_decomp_list(wiki_decomp_soup)
 
 
 class Decompose(object):
-    '''This is an object that holds all information about a character from the
-    Wikicommons decomposition project.'''
+    """This is an object that holds all information about a character from the
+    Wikicommons decomposition project."""
 
     def __init__(self, key_char, decomp_table=wiki_decomp_list):
         self.key_char = key_char
@@ -165,9 +165,9 @@ def get_comp_dict(char_list):
     pool = Pool()
     global comp_dict
     comp_dict = {}
-    print("Breaking down all characters... This can take quite a while and "
-          "take up some resources. For your entertainment, here are the "
-          "characters as they are processed:")
+    # print("Breaking down all characters... This can take quite a while and "
+    #       "take up some resources. For your entertainment, here are the "
+    #       "characters as they are processed:")
     for char in char_list:
         pool.apply_async(get_single_comp_dict,
                          args=(char, ),
@@ -193,6 +193,20 @@ def get_single_comp_dict(char):
 
 
 def dynamic_print(msg):
-    '''Update a single line on the terminal'''
+    """Update a single line on the terminal"""
     sys.stdout.write('\r\x1b[K' + str(msg))
     sys.stdout.flush()
+
+
+def get_attr_dict(char_list, attr):
+    """Create a dict from any attribute for char_list."""
+    return_dict = {}
+    pool = Pool()
+    for char in char_list:
+        dynamic_print(char)
+        result = pool.apply_async(getattr,
+                                  (Decompose(char), attr))
+        return_dict[char] = result.get()
+    pool.close()
+    pool.join()
+    return return_dict
