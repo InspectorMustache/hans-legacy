@@ -4,6 +4,7 @@
 from mappings import Mappings
 import pickle
 import jiantofan
+import decomposer
 
 mappings = Mappings('mappings/heisig.txt')
 jian_chars = list(mappings.jians.keys())
