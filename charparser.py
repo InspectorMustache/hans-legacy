@@ -11,10 +11,13 @@ jian_chars = list(mappings.jians.keys())
 fan_chars = list(mappings.fans.keys())
 all_chars = set(jian_chars + fan_chars)
 
-with open('crpickle', 'rb') as crp:
-    comp_dict = pickle.load(crp)
+with open('c_dict.pickle', 'rb') as cdp_file:
+    comp_dict = pickle.load(cdp_file)
 
-crel = jiantofan.ComponentRelation(mappings, comp_dict)
+with open('ct_dict.pickle', 'rb') as ctdp_file:
+    comp_type_dict = pickle.load(ctdp_file)
+
+crel = jiantofan.ComponentRelation(mappings, comp_dict, comp_type_dict)
 
 
 # lessons.create_lessons(crel)

@@ -6,13 +6,15 @@ class ComponentRelation(object):
 
     def __init__(self,
                  mappings,
-                 comp_dict):
+                 comp_dict,
+                 comp_type_dict):
         self.jian_pool = mappings.jians.keys()
         self.fan_pool = mappings.fans.keys()
         self.mappings = mappings
         self.comp_dict = comp_dict
+        self.comp_type_dict = comp_type_dict
 
-    def get_chars(self, component, comp_type=None, charset=None):
+    def get_chars(self, component, charset=None):
         """Return all Hanzi that contain component with positional property
         comp_type."""
         charset = charset or 'jian'
@@ -31,18 +33,17 @@ class ComponentRelation(object):
         return component_list
 
     def test_for_comp_type(self, char, comp, comp_type):
-        """Check if one of the parent_comps in char have comp_type. Always
-        return True if comp_type is None."""
-        if comp_type is None:
-            return True
-
+        """Check if one of the parent_comps of comp in char have comp_type."""
         parent_comps = self.get_parent_comps(char, comp)
+
         if len(parent_comps) == 0:
-            parent_comps.append(Decompose(char))
+            parent_comps.append(char)
+
         for p_comp in parent_comps:
-            if p_comp.comp_type == comp_type:
+            if self.comp_type_dict[p_comp] == comp_type:
                 return True
-        return False
+            else:
+                return False
 
     def get_correspondence(self, char, charset=None):
         """Return matching chars from the other charset."""
@@ -80,13 +81,14 @@ class ComponentRelation(object):
         return exceptions
 
     def get_parent_comps(self, char, comp):
-        """Return a list of all (usually one) parent comps/chars of comp as
-        Decompose objects."""
+        """Return a list of all (usually one) parent comps/chars of comp in
+        char."""
         match_comp = []
-        for decomp in Decompose(char).break_down_into_objects():
+        for char_comp in Decompose(char).break_down():
+            decomp = Decompose(char_comp)
             parts = [decomp.first_part, decomp.second_part]
             if comp in parts and '*' not in parts:
-                match_comp.append(decomp)
+                match_comp.append(char_comp)
         return match_comp
 
     def count_comp_types(self, decomps, comp_type):
