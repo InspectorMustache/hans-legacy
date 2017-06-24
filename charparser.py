@@ -4,7 +4,8 @@
 from mappings import Mappings
 import pickle
 import jiantofan
-import decomposer
+import lessons
+import re
 
 mappings = Mappings('mappings/heisig.txt')
 jian_chars = list(mappings.jians.keys())
@@ -18,6 +19,3 @@ with open('ct_dict.pickle', 'rb') as ctdp_file:
     comp_type_dict = pickle.load(ctdp_file)
 
 crel = jiantofan.ComponentRelation(mappings, comp_dict, comp_type_dict)
-
-
-# lessons.create_lessons(crel)
