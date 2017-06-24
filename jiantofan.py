@@ -1,4 +1,3 @@
-# TODO: retrieve comp_type by dictionary to speed things up
 from decomposer import Decompose
 
 
@@ -14,7 +13,7 @@ class ComponentRelation(object):
         self.comp_dict = comp_dict
         self.comp_type_dict = comp_type_dict
 
-    def get_chars(self, component, charset=None):
+    def get_chars(self, component, comp_type=None, charset=None):
         """Return all Hanzi that contain component with positional property
         comp_type."""
         charset = charset or 'jian'
@@ -33,17 +32,21 @@ class ComponentRelation(object):
         return component_list
 
     def test_for_comp_type(self, char, comp, comp_type):
-        """Check if one of the parent_comps of comp in char have comp_type."""
-        parent_comps = self.get_parent_comps(char, comp)
+        """Check if one of the parent_comps of comp in char have comp_type. If
+        comp_type is None, always return True."""
+        if comp_type is None:
+            return True
+        else:
+            parent_comps = self.get_parent_comps(char, comp)
 
-        if len(parent_comps) == 0:
-            parent_comps.append(char)
+            if len(parent_comps) == 0:
+                parent_comps.append(char)
 
-        for p_comp in parent_comps:
-            if self.comp_type_dict[p_comp] == comp_type:
-                return True
-            else:
-                return False
+            for p_comp in parent_comps:
+                if self.comp_type_dict[p_comp] == comp_type:
+                    return True
+                else:
+                    return False
 
     def get_correspondence(self, char, charset=None):
         """Return matching chars from the other charset."""
@@ -131,18 +134,18 @@ class ComponentRelation(object):
         # char is learnable if...
         # ... no components are left when all those that are identical have
         # been removed
-        comps = self.remove_identical(comps)
+        comps = self.remove_identical_comps(comps)
         if len(comps['jians']) + len(comps['fans']) == 0:
             return True
         # ... all non-identical components have been learned before
-        comps = self.remove_learned(comps, learned_chars)
+        comps = self.remove_learned_comps(comps, learned_chars)
         if len(comps['jians']) + len(comps['fans']) == 0:
             return True
 
         # otherwise they can not be learned
         return False
 
-    def remove_identical(self, comps):
+    def remove_identical_comps(self, comps):
         """Remove identical components of two component lists."""
         overlap = set(comps['jians']) & set(comps['fans'])
 
@@ -151,7 +154,7 @@ class ComponentRelation(object):
             comps['fans'].remove(char)
         return comps
 
-    def remove_learned(self, comps, learned_chars):
+    def remove_learned_comps(self, comps, learned_chars):
         """Remove all components that have been learned before from two
         component lists."""
         for jian in comps['jians']:
@@ -162,3 +165,12 @@ class ComponentRelation(object):
             except KeyError:
                 pass
         return comps
+
+    def test_identical_fan(self, jian):
+        """Check if a jian char maps to an identical fan char and no other
+        chars."""
+        fans = self.get_correspondence(jian)
+        if len(fans) == 1 and jian == fans[0]:
+            return True
+        else:
+            return False
