@@ -2,6 +2,8 @@ from decomposer import Decompose
 
 
 class ComponentRelation(object):
+    """Retrieve information about character correspondences between the two
+    charsets."""
 
     def __init__(self,
                  mappings,
@@ -57,7 +59,7 @@ class ComponentRelation(object):
         elif charset == 'fan':
             return mappings.fans[char]
 
-    def get_exceptions(self, jian_comp, fan_comp, comp_type):
+    def get_exceptions(self, jian_comp, fan_comp, comp_type=None):
         """Get exceptions for the rule [jian_comp -> fan_comp]. Comps
         positional properties have to be comp_type."""
         jians = self.get_chars(jian_comp, comp_type=comp_type)
