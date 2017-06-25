@@ -35,7 +35,6 @@ class Mappings(object):
 
         return jian_to_fan_dict, fan_to_jian_dict
 
-
     def list_char_entrys(self, entry):
         char_list = []
         for char in entry:
