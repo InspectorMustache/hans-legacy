@@ -1,8 +1,20 @@
-from textwrap import dedent
+import textwrap
 import os
+import re
 
 if not os.path.exists('lessons'):
     os.mkdir('lessons')
+
+
+class Formatter(textwrap.TextWrapper):
+    def fill(self, text):
+        text = re.sub(r'\s+', ' ', text)
+        return super().fill(text)
+
+
+formatter = Formatter(width=80,
+                      initial_indent='# ',
+                      subsequent_indent='# ')
 
 
 def create_lessons(crel):
@@ -28,7 +40,12 @@ def write_lesson_file(lines, lesson_name):
 
 def lesson_1(crel, learned_chars):
     lines = []
-    lines.append(dedent('''# This is the first lesson and by all probability also the largest. It contains all those simplified characters, of which you already know the traditional variant, meaning they are identical. These characters are not ordered in any meaningful way so this lesson mainly serves to give you a basic overview of the number of characters you will not have to learn anew.'''))
+    lines.append(formatter.fill('''This is the first lesson and by all
+        probability also the largest. It contains all those simplified
+        characters, of which you already know the traditional variant, meaning
+        they are identical. These characters are not ordered in any meaningful
+        way so this lesson mainly serves to give you a basic overview of the
+        number of characters you will not have to learn anew.'''))
     lines.append('')
     rules = {}
     for jian in crel.jian_pool:
