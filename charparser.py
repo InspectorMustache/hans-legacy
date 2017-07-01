@@ -1,3 +1,4 @@
+#TODO: why does comp_dict have no key 戋?
 # this should just be a temporary file until I have determined what lists/dicts
 # I actually want
 # import re
@@ -19,4 +20,5 @@ with open('ct_dict.pickle', 'rb') as ctdp_file:
 
 crel = jiantofan.ComponentRelation(mappings, comp_dict, comp_type_dict)
 
+lessons.lesson_2(crel)
 lessons.lesson_3(crel)
