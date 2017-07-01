@@ -115,7 +115,13 @@ class ComponentRelation(object):
             else:
                 fan = fan[0]
 
+            # if fan_comp is not in fan, the rule we're checking doesn't apply
+            if fan_comp not in self.comp_dict(fan):
+                continue
+
             # create copies of comp_lists so no components get lost
+            # also remove jian_comp and fan_comp from the respective lists for
+            # comparing chars
             jian_comp_list = self.remove_component(jian, jian_comp)
             fan_comp_list = self.remove_component(fan, fan_comp)
 
