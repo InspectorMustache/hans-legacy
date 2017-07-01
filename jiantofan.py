@@ -1,6 +1,3 @@
-from decomposer import Decompose
-
-
 class ComponentRelation(object):
     """Retrieve information about character correspondences between the two
     charsets."""
@@ -89,8 +86,8 @@ class ComponentRelation(object):
         """Return a list of all (usually one) parent comps/chars of comp in
         char."""
         match_comp = []
-        for char_comp in Decompose(char).break_down():
-            decomp = Decompose(char_comp)
+        for char_comp in self.comp_type_dict[char]:
+            decomp = self.comp_type_dict[char_comp]
             parts = [decomp.first_part, decomp.second_part]
             if comp in parts and '*' not in parts:
                 match_comp.append(char_comp)
@@ -119,17 +116,34 @@ class ComponentRelation(object):
                 fan = fan[0]
 
             # create copies of comp_lists so no components get lost
-            jian_comp_list = self.comp_dict[jian].copy()
-            fan_comp_list = self.comp_dict[fan].copy()
+            jian_comp_list = self.remove_component(jian, jian_comp)
+            fan_comp_list = self.remove_component(fan, fan_comp)
+
             comps = {'jians': jian_comp_list,
                      'fans': fan_comp_list}
-            comps['jians'].remove(jian_comp)
-            comps['fans'].remove(fan_comp)
 
             if self.test_learnable(comps, learned_chars):
                 learnable_pairs[jian] = fan
 
         return learnable_pairs
+
+    def remove_component(self, char, comp):
+        """Remove comp including ALL of its subcomps from char and return a
+        list of all components that are left."""
+        # since we are removing things, create a copy of the list first
+        comps = self.comp_dict[char].copy()
+        comps.remove(comp)
+
+        try:
+            subcomps = self.comp_dict[comp]
+            for subcomp in subcomps:
+                comps.remove(subcomp)
+        except (KeyError, ValueError):
+            # KeyError means comp can't be broken down
+            # ValueError means comp only has itself as subcomp
+            pass
+
+        return comps
 
     def test_learnable(self, comps, learned_chars):
         """Check if fan can be learned at this point."""
