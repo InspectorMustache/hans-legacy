@@ -165,6 +165,8 @@ def get_comp_dict(char_list):
     pool = Pool()
     global comp_dict
     comp_dict = {}
+    global subcomps
+    subcomps = set()
     # print("Breaking down all characters... This can take quite a while and "
     #       "take up some resources. For your entertainment, here are the "
     #       "characters as they are processed:")
@@ -172,6 +174,19 @@ def get_comp_dict(char_list):
         pool.apply_async(get_single_comp_dict,
                          args=(char, ),
                          callback=update_comp_dict)
+
+    # wait for the first run to finish before we continue with the next one
+    pool.close()
+    pool.join()
+
+    chars_so_far = set(comp_dict.keys())
+    subcomps = subcomps - chars_so_far
+    pool = Pool()
+    print('check')
+    for comp in subcomps:
+        pool.apply_async(get_single_comp_dict,
+                         args=(comp, ),
+                         callback=update_comp_dict_further)
     pool.close()
     pool.join()
     print()
@@ -179,6 +194,15 @@ def get_comp_dict(char_list):
 
 
 def update_comp_dict(single_comp_dict):
+    """First run for chars."""
+    char = list(single_comp_dict.keys())[0]
+    dynamic_print(char)
+    comp_dict.update(single_comp_dict)
+    subcomps.update(list(single_comp_dict.values())[0])
+
+
+def update_comp_dict_further(single_comp_dict):
+    """Second run for subcomps."""
     char = list(single_comp_dict.keys())[0]
     dynamic_print(char)
     comp_dict.update(single_comp_dict)
