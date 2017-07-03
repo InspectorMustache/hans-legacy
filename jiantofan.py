@@ -105,54 +105,31 @@ class ComponentRelation(object):
         fan_comp]."""
         jians = self.get_chars(jian_comp)
         learnable_pairs = {}
+        for jian in jians:
 
-        # make a copy of learned_chars for local use only
-        lc_local = learned_chars.copy()
-
-        # loop until we won't find anything new anymore
-        # this is for checking learned_chars recursively, so we can get both 贝
-        # and 页 for example
-        found = 0
-        while True:
-            for jian in jians:
-
-                # discard jian if it already has been learned
-                if jian in lc_local:
-                    continue
-                else:
-                    fan = self.get_correspondence(jian)
-
-                # this isn't suitable for multi mappings because those need to
-                # be learned with a different system
-                if len(fan) > 1:
-                    continue
-                else:
-                    fan = fan[0]
-
-                # if fan_comp is not in fan, the rule we're checking doesn't
-                # apply
-                if fan_comp not in self.comp_dict[fan]:
-                    continue
-
-                # create copies of comp_lists so no components get lost
-                # also remove jian_comp and fan_comp from the respective lists
-                # for comparing chars
-                jian_comp_list = self.remove_component(jian, jian_comp)
-                fan_comp_list = self.remove_component(fan, fan_comp)
-
-                comps = {'jians': jian_comp_list,
-                         'fans': fan_comp_list}
-
-                if jian == '颖':
-                    import pdb; pdb.set_trace()
-                if self.test_learnable(comps, lc_local):
-                    learnable_pairs[jian] = fan
-
-            if len(learnable_pairs) == found:
-                break
+            # this isn't suitable for multi mappings because those need to be
+            # learned with a different system
+            fan = self.get_correspondence(jian)
+            if len(fan) > 1:
+                continue
             else:
-                lc_local.update(learnable_pairs)
-                found = len(learnable_pairs)
+                fan = fan[0]
+
+            # if fan_comp is not in fan, the rule we're checking doesn't apply
+            if fan_comp not in self.comp_dict[fan]:
+                continue
+
+            # create copies of comp_lists so no components get lost
+            # also remove jian_comp and fan_comp from the respective lists for
+            # comparing chars
+            jian_comp_list = self.remove_component(jian, jian_comp)
+            fan_comp_list = self.remove_component(fan, fan_comp)
+
+            comps = {'jians': jian_comp_list,
+                     'fans': fan_comp_list}
+
+            if self.test_learnable(comps, learned_chars):
+                learnable_pairs[jian] = fan
 
         return learnable_pairs
 
