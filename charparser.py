@@ -1,4 +1,3 @@
-#TODO: why does comp_dict have no key 戋?
 # this should just be a temporary file until I have determined what lists/dicts
 # I actually want
 # import re
@@ -6,6 +5,8 @@ from mappings import Mappings
 import pickle
 import jiantofan
 import lessons
+if __name__ != '__main__':
+    from decomposer import Decompose
 
 mappings = Mappings('mappings/heisig.txt')
 jian_chars = list(mappings.jians.keys())
@@ -20,5 +21,7 @@ with open('ct_dict.pickle', 'rb') as ctdp_file:
 
 crel = jiantofan.ComponentRelation(mappings, comp_dict, comp_type_dict)
 
-lessons.lesson_2(crel)
-lessons.lesson_3(crel)
+if __name__ == '__main__':
+    # lessons.create_lessons(crel)
+    lessons.lesson_3(crel)
+    print('Döne.')
