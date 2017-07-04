@@ -105,35 +105,53 @@ class ComponentRelation(object):
         fan_comp]."""
         jians = self.get_chars(jian_comp)
         learnable_pairs = {}
-        for jian in jians:
+        lc_local = learned_chars.copy()
+        found = 0
+        while True:
+            for jian in jians:
 
-            # this isn't suitable for multi mappings because those need to be
-            # learned with a different system
-            fan = self.get_correspondence(jian)
-            if len(fan) > 1:
-                continue
+                # discard jian if it already has been learned
+                if jian in lc_local:
+                    continue
+                else:
+                    fan = self.get_correspondence(jian)
+
+                # this isn't suitable for multi mappings because those need to
+                # be learned with a different system
+                if len(fan) > 1:
+                    continue
+                else:
+                    fan = fan[0]
+
+                # if fan_comp is not in fan, the rule we're checking doesn't apply
+                if fan_comp not in self.comp_dict[fan]:
+                    continue
+
+                # create copies of comp_lists so no components get lost
+                # also remove jian_comp and fan_comp from the respective lists for
+                # comparing chars
+                jian_comp_list = self.remove_component(jian,
+                                                       jian_comp,
+                                                       fan_comp)
+                fan_comp_list = self.remove_component(fan,
+                                                      fan_comp,
+                                                      jian_comp)
+
+                comps = {'jians': jian_comp_list,
+                         'fans': fan_comp_list}
+
+                if self.test_learnable(comps, lc_local):
+                    learnable_pairs[jian] = fan
+
+            if len(learnable_pairs) == found:
+                break
             else:
-                fan = fan[0]
+                found = len(learnable_pairs)
+                lc_local.update(learnable_pairs)
 
-            # if fan_comp is not in fan, the rule we're checking doesn't apply
-            if fan_comp not in self.comp_dict[fan]:
-                continue
+            return learnable_pairs
 
-            # create copies of comp_lists so no components get lost
-            # also remove jian_comp and fan_comp from the respective lists for
-            # comparing chars
-            jian_comp_list = self.remove_component(jian, jian_comp)
-            fan_comp_list = self.remove_component(fan, fan_comp)
-
-            comps = {'jians': jian_comp_list,
-                     'fans': fan_comp_list}
-
-            if self.test_learnable(comps, learned_chars):
-                learnable_pairs[jian] = fan
-
-        return learnable_pairs
-
-    def remove_component(self, char, comp):
+    def remove_component(self, char, comp, opposite_comp):
         """Remove comp including ALL of its subcomps from char and return a
         list of all components that are left."""
         # since we are removing things, create a copy of the list first
@@ -144,10 +162,25 @@ class ComponentRelation(object):
             subcomps = self.comp_dict[comp]
             for subcomp in subcomps:
                 comps.remove(subcomp)
-        except (KeyError, ValueError):
-            # KeyError means comp can't be broken down
-            # ValueError means comp only has itself as subcomp
-            pass
+        except ValueError as exc:
+            # this should mean comp only has itself as subcomp
+            if len(subcomps) == 1:
+                pass
+            else:
+                raise exc
+
+        # safely removing all bigger comps that contain comp should be possible
+        # since the parts of them that are relevant have already been broken
+        # off
+        # also remove the character of the opposite set this should also be
+        # safe
+        # if it's not we need to change this to only delete comps that have a
+        # corresponding component in the opposite comp_list
+        comps_copy = comps.copy()
+        for c_comp in comps_copy:
+            if (comp in self.comp_dict[c_comp] or
+                    opposite_comp in self.comp_dict[c_comp]):
+                comps.remove(c_comp)
 
         return comps
 

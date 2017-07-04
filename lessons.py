@@ -21,7 +21,9 @@ formatter = Formatter(width=80,
 
 def create_lessons(crel):
     # call all lesson functions from here
-    pass
+    lesson_1(crel)
+    lesson_2(crel)
+    lesson_3(crel)
 
 
 def get_charmap_line(jian, fan, indent='', arrow='-->'):
@@ -131,7 +133,6 @@ def lesson_2(crel):
 
 
 def lesson_3(crel):
-    print(learned_chars)
     lines = []
-    lines.extend(get_rule_block(crel, '戋', '戔', learned_chars))
+    lines.extend(get_rule_block(crel, '贝', '貝', learned_chars))
     write_lesson_file(lines, 'lesson3')
