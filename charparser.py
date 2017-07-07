@@ -22,6 +22,5 @@ with open('ct_dict.pickle', 'rb') as ctdp_file:
 crel = jiantofan.ComponentRelation(mappings, comp_dict, comp_type_dict)
 
 if __name__ == '__main__':
-    # lessons.create_lessons(crel)
-    lessons.lesson_3(crel)
+    lessons.create_lessons(crel)
     print('Döne.')
