@@ -170,7 +170,7 @@ def lesson_3(crel):
                 the exception of the right stroke at the bottom.''')
         lesson.append_char_rule_block('见', '見', learned_chars, terminator='')
 
-        # lesson.append_char_rule_block('丬', '爿', learned_chars, terminator='')
+        lesson.append_char_rule_block('丬', '爿', learned_chars, terminator='')
 
         lesson.append_char_rule_block('争', '爭', learned_chars, terminator='')
 

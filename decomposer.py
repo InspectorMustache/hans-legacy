@@ -176,13 +176,10 @@ def get_comp_dict(char_list):
                          callback=update_comp_dict)
 
     # wait for the first run to finish before we continue with the next one
-    pool.close()
     pool.join()
 
     chars_so_far = set(comp_dict.keys())
     subcomps = subcomps - chars_so_far
-    pool = Pool()
-    print('check')
     for comp in subcomps:
         pool.apply_async(get_single_comp_dict,
                          args=(comp, ),
