@@ -223,7 +223,18 @@ class ComponentRelation(object):
             try:
                 if learned_chars[jian] in comps['fans']:
                     comps['jians'].remove(jian)
+                    for subcomp in self.comp_dict[jian]:
+                        try:
+                            comps['jians'].remove(subcomp)
+                        except ValueError:
+                            pass
+
                     comps['fans'].remove(learned_chars[jian])
+                    for subcomp in self.comp_dict[learned_chars[jian]]:
+                        try:
+                            comps['fans'].remove(subcomp)
+                        except ValueError:
+                            pass
             except KeyError:
                 pass
         return comps

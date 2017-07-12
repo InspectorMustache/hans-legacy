@@ -6,7 +6,7 @@ import pickle
 import jiantofan
 import lessons
 import storage
-from decomposer import Decompose, get_comp_dict, get_attr_dict
+# from decomposer import Decompose, get_comp_dict, get_attr_dict
 
 mappings = Mappings('mappings/heisig.txt')
 jian_chars = list(mappings.jians.keys())
