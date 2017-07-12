@@ -84,6 +84,7 @@ def create_lessons(crel):
     lesson_1(crel)
     lesson_2(crel)
     lesson_3(crel)
+    lesson_4(crel)
 
 
 def lesson_1(crel):
@@ -171,11 +172,11 @@ def lesson_3(crel):
                 the exception of the right stroke at the bottom.''')
         lesson.append_char_rule_block('见', '見', learned_chars, terminator='')
 
-        lesson.append_char_rule_block('丬', '爿', learned_chars, terminator='')
+        # lesson.append_char_rule_block('丬', '爿', learned_chars, terminator='')
 
         lesson.append_char_rule_block('争', '爭', learned_chars, terminator='')
 
-        lesson.append_char_rule_block('单', '單', learned_chars, terminator='')
+        # lesson.append_char_rule_block('单', '單', learned_chars, terminator='')
 
         lesson.append_comment('''Yes, the "simplification" in this case consists of
                 removing the one short line between the two 口.''')
@@ -190,4 +191,41 @@ def lesson_3(crel):
 
 
 def lesson_4(crel):
-    pass
+    with LessonWriter('lesson4', crel) as lesson:
+        lesson.append_comment('''The rules in this lesson concern traditional
+        characters that are more complex than their simplified counterparts -
+        in some cases significantly so, however they have an iconographic
+        character to them. Thus, they shouldn't be too difficult to learn.''')
+        lesson.append_comment('''The first rules mostly cover characters
+        depicting different types of animals. For consistency's sake [鱼] -->
+        [魚] is listed here as well, even though its simplicity fits better
+        with the rules of the last lesson.''')
+
+        lesson.append_char_rule_block('鱼', '魚', learned_chars, terminator='')
+
+        lesson.append_char_rule_block('马', '馬', learned_chars, terminator='')
+
+        lesson.append_char_rule_block('鸟', '鳥', learned_chars, terminator='')
+
+        lesson.append_comment('''This character appears rarely as a component.
+        However, it makes sense to learn it together with the last one.''')
+        lesson.append_char_rule_block('乌', '烏', learned_chars, terminator='')
+
+        lesson.append_char_rule_block('龙', '龍', learned_chars, terminator='')
+
+        lesson.append_char_rule_block('黾', '黽', learned_chars, terminator='')
+
+        lesson.append_comment('''Another rare character and what's more, one
+        that is quite difficult to draw. Nevertheless, in a lesson concerning
+        different animal related characters, it needs to be mentioned as
+        well.''')
+        lesson.append_char_rule_block('龟', '龜', learned_chars, terminator='\n')
+
+        lesson.append_comment('''While these last rules don't refer to animals,
+        they also cover characters which have an iconographic quality.''')
+        lesson.append_char_rule_block('东', '東', learned_chars, terminator='')
+
+        # what's going on here?
+        lesson.append_comp_rule_block('柬', '東', learned_chars, terminator='')
+
+        lesson.append_comp_rule_block('车', '車', learned_chars)
