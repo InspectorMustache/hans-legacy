@@ -108,39 +108,13 @@ class Decompose(object):
                 parts.append(char)
             elif char_decomp.second_part == '*':
                 parts.append(char)
+                if char_decomp.first_part != char:
+                    parts.append(char_decomp.first_part)
             else:
                 parts.append(char)
                 self.break_down_loop(char_decomp.first_part,
                                      char_decomp.second_part,
                                      parts)
-
-    def break_down_into_objects(self):
-        """Same as break_down but don't create a list of all parts but instead
-        a list of objects of all parts."""
-        if self.first_part == 'Undefined':
-            return []
-
-        keychar1 = self.first_part
-        keychar2 = self.second_part
-        objects = []
-        self.break_down_object_loop(keychar1, keychar2, objects)
-        return objects
-
-    def break_down_object_loop(self, keychar1, keychar2, objects):
-        char_list = self.populate_char_list(keychar1, keychar2)
-        for char in char_list:
-            char_decomp = Decompose(char)
-            if char_decomp.first_part == 'Undefined':
-                objects.append(char_decomp)
-            elif char_decomp.strokes_all == 1:
-                objects.append(char_decomp)
-            elif char_decomp.second_part == '*':
-                objects.append(char_decomp)
-            else:
-                objects.append(char_decomp)
-                self.break_down_object_loop(char_decomp.first_part,
-                                            char_decomp.second_part,
-                                            objects)
 
     def populate_char_list(self, keychar1, keychar2):
         # first_ and second_part can also contain multiple chars, that's what
@@ -176,7 +150,9 @@ def get_comp_dict(char_list):
                          callback=update_comp_dict)
 
     # wait for the first run to finish before we continue with the next one
+    pool.close()
     pool.join()
+    pool = Pool()
 
     chars_so_far = set(comp_dict.keys())
     subcomps = subcomps - chars_so_far
