@@ -42,13 +42,14 @@ class LessonWriter(object):
         if type(terminator) is str:
             self.lines.append(terminator)
 
-    def append_char_rule_block(self, jian, fan, learned_chars, **kwargs):
+    def append_char_rule_block(self, jian, fan,
+                               learned_chars, comp_type=None, **kwargs):
         """Get a list of lines consisting of a block of rules: First, the
         underlying char rule, than the resulting char rules. Also update
         learned_chars."""
         learned_chars.update({jian: fan})
         self.lines.append(self.get_charmap_line(jian, fan))
-        rules = self.crel.get_learnables(jian, fan, learned_chars)
+        rules = self.crel.get_learnables(jian, fan, learned_chars, comp_type)
         if rules is None:
             pass
         else:
@@ -178,8 +179,14 @@ def lesson_3(crel):
 
         lesson.append_comment('''Yes, the "simplification" in this case consists of
                 removing the one short line between the two 口.''')
+        lesson.append_char_rule_block('吕', '呂', learned_chars, terminator='')
 
-        lesson.append_char_rule_block('吕', '呂', learned_chars)
+        lesson.append_comment('''艹 and 炏 in the following rule don't apply to
+                these components in general, but only when they appear on top
+                of 冖. However, no unicode character exists for these two
+                specific component. That is why this rule is represented by
+                components lacking the 冖 part. ''')
+        lesson.append_char_rule_block('艹', '炏', learned_chars, comp_type='冖')
 
 
 def lesson_4(crel):

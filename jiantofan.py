@@ -1,3 +1,5 @@
+from decomposer import Decompose
+
 class ComponentRelation(object):
     """Retrieve information about character correspondences between the two
     charsets."""
@@ -87,7 +89,7 @@ class ComponentRelation(object):
         char."""
         match_comp = []
         for char_comp in self.comp_type_dict[char]:
-            decomp = self.comp_type_dict[char_comp]
+            decomp = Decompose(char_comp)
             parts = [decomp.first_part, decomp.second_part]
             if comp in parts and '*' not in parts:
                 match_comp.append(char_comp)
@@ -100,10 +102,14 @@ class ComponentRelation(object):
                 counter += 1
         return counter
 
-    def get_learnables(self, jian_comp, fan_comp, learned_chars):
+    def get_learnables(self,
+                       jian_comp,
+                       fan_comp,
+                       learned_chars,
+                       comp_type=None):
         """Get all chars that can be learned with the rule [jian_comp ->
         fan_comp]."""
-        jians = self.get_chars(jian_comp)
+        jians = self.get_chars(jian_comp, comp_type)
         learnable_pairs = {}
         lc_local = learned_chars.copy()
         found = 0
